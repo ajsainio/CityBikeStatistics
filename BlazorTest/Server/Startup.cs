@@ -6,6 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using BlazorTest.Server.Controllers;
+using System;
+using System.Net.Http;
+using BlazorTest.Server.Data;
+using BlazorTest.Server.Database;
+using BlazorTest.Server.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorTest.Server {
   public class Startup {
@@ -21,6 +28,16 @@ namespace BlazorTest.Server {
 
       services.AddControllersWithViews();
       services.AddRazorPages();
+
+      services.AddHttpClient<CityBikeDataService>(c => {
+        c.BaseAddress = new Uri("https://dev.hsl.fi/");
+      });
+
+      services.AddDbContext<CityBikeContext>(options => {
+        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+      });
+
+      services.AddScoped<CityBikeDataRepository>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

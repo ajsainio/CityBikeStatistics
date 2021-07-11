@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NServiceBus;
 
 namespace BlazorTest.Server {
   public class Program {
@@ -13,10 +8,21 @@ namespace BlazorTest.Server {
       CreateHostBuilder(args).Build().Run();
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => {
-              webBuilder.UseStartup<Startup>();
-            });
+    public static IHostBuilder CreateHostBuilder(string[] args) {
+      var host = Host.CreateDefaultBuilder(args);
+      host.ConfigureWebHostDefaults(webBuilder => {
+        webBuilder.UseStartup<Startup>();
+      });
+      host.UseNServiceBus(context => {
+        var endpointConfig = new EndpointConfiguration("CityBikeData");
+        endpointConfig.PurgeOnStartup(true);
+        endpointConfig.UseTransport<LearningTransport>().NoPayloadSizeRestriction();
+        var recoverability = endpointConfig.Recoverability();
+        recoverability.Immediate(r => r.NumberOfRetries(1));
+        recoverability.Delayed(r => r.NumberOfRetries(0));
+        return endpointConfig;
+      });
+      return host;
+    }
   }
 }

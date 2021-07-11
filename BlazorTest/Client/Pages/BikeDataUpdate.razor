@@ -1,0 +1,39 @@
+﻿@page "/bikedataupdate"
+@using BlazorTest.Shared
+@using BlazorTest.Client.Enums
+@inject HttpClient Http
+
+<h1>Bike data update</h1>
+
+@if (_isDownloading) {
+  <p><em>Downloading bike data...</em></p>
+} else {
+  <button class="btn btn-primary" @onclick="StartBikeDataUpdate">Update City Bike Data</button>
+}
+
+@if (_downloadStatus == BikeDataDownloadStatus.FileFound) {
+  <p><em>File downloaded and sent to handling</em></p>
+}
+
+@if (_downloadStatus == BikeDataDownloadStatus.FileNotFound) {
+  <p><em>File for given time period was not found</em></p>
+}
+
+@code {
+
+  private bool _isDownloading;
+  private BikeDataDownloadStatus _downloadStatus;
+
+  private async Task StartBikeDataUpdate() {
+    _downloadStatus = BikeDataDownloadStatus.DownloadNotStarted;
+    _isDownloading = true;
+    var contract = new BikeDataDownloadContract {
+      Year = 2020,
+      Month = 10
+    };
+    var response = await Http.PostAsJsonAsync("CityBikeDataDownload", contract);
+    _isDownloading = false;
+    _downloadStatus = response.IsSuccessStatusCode ? BikeDataDownloadStatus.FileFound : BikeDataDownloadStatus.FileNotFound;
+  }
+
+}
