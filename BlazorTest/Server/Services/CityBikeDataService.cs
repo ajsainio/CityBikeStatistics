@@ -26,7 +26,7 @@ namespace BlazorTest.Server.Services {
     public async Task DownloadCityBikeData(BikeDataDownloadContract contract) {
       _logger.LogInformation($"Get city bike data file for year {contract.Year} and month {contract.Month}");
       var response = await _httpClient.GetAsync($"citybikes/od-trips-{contract.Year}/{contract.Year}-{contract.Month}.csv");
-      
+
       if (!response.IsSuccessStatusCode) {
         throw new InvalidOperationException($"Downloading file for year {contract.Year} and month {contract.Month} failed");
       }

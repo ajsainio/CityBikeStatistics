@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BlazorTest.Server.Services;
 using BlazorTest.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +19,15 @@ namespace BlazorTest.Server.Controllers {
     }
 
     [HttpPost]
-    public async Task UpdateCityBikeData(BikeDataDownloadContract contract) {
-      await _bikeDataService.DownloadCityBikeData(contract);
+    public async Task<IActionResult> UpdateCityBikeData(BikeDataDownloadContract contract) {
+      try {
+        await _bikeDataService.DownloadCityBikeData(contract);
+        return Ok();
+      } catch (Exception e) {
+        _logger.LogError("Error while downloading city bike data", e);
+        return new NotFoundResult();
+      }
+
     }
   }
 }

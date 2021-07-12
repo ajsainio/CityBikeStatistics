@@ -1,5 +1,4 @@
-﻿using System.Data;
-using BlazorTest.Shared;
+﻿using BlazorTest.Shared;
 using CsvHelper.Configuration;
 
 namespace BlazorTest.Server.Data {
