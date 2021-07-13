@@ -25,7 +25,7 @@ namespace CityBikeStatistics.Server.Services {
     /// <returns>boolean indicating if file was found and downloaded</returns>
     public async Task DownloadCityBikeData(BikeDataDownloadContract contract) {
       _logger.LogInformation($"Get city bike data file for year {contract.Year} and month {contract.Month}");
-      var response = await _httpClient.GetAsync($"citybikes/od-trips-{contract.Year}/{contract.Year}-{contract.Month}.csv");
+      var response = await _httpClient.GetAsync($"citybikes/od-trips-{contract.Year}/{contract.Year}-{contract.Month:D2}.csv");
 
       if (!response.IsSuccessStatusCode) {
         throw new InvalidOperationException($"Downloading file for year {contract.Year} and month {contract.Month} failed");
