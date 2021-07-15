@@ -1,0 +1,28 @@
+﻿@using CityBikeStatistics.Shared
+<table class="table">
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>Departure time</th>
+    <th>Return time</th>
+    <th>Departure station</th>
+    <th>Return station</th>
+  </tr>
+  </thead>
+  <tbody>
+  @foreach (var data in CityBikeStationData) {
+    <tr>
+      <td>@data.RecordId</td>
+      <td>@data.Departure.ToShortDateString()</td>
+      <td>@data.Return.ToShortDateString()</td>
+      <td>@data.DepartureStationName</td>
+      <td>@data.ReturnStationName</td>
+    </tr>
+  }
+  </tbody>
+</table>
+
+@code {
+  [Parameter]
+  public CityBikeDataContract[] CityBikeStationData { get; set; }
+}

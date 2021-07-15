@@ -11,6 +11,8 @@ namespace CityBikeStatistics.Server.Database {
 
       modelBuilder.Entity<CityBikeData>(x => {
         x.HasIndex(i => i.RecordId).IsUnique();
+        x.HasIndex(i => i.DepartureStationId);
+        x.HasIndex(i => i.ReturnStationId);
         x.Property(p => p.CoveredDistance).HasColumnType("Decimal(18,2)");
       });
     }

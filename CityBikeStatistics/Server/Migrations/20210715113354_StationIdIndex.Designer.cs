@@ -4,14 +4,16 @@ using CityBikeStatistics.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CityBikeStatistics.Server.Migrations
 {
     [DbContext(typeof(CityBikeContext))]
-    partial class CityBikeContextModelSnapshot : ModelSnapshot
+    [Migration("20210715113354_StationIdIndex")]
+    partial class StationIdIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

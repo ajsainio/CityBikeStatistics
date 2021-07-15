@@ -4,38 +4,42 @@
 
 <h1>Bike data</h1>
 
-@if (_cityBikeData == null) {
+@if (_cityBikeStations == null) {
   <p><em>Loading...</em></p>
 } else {
   <table class="table">
     <thead>
       <tr>
-        <th>Id</th>
-        <th>Departure time</th>
-        <th>Return time</th>
-        <th>Departure station</th>
-        <th>Return station</th>
+        <th>Station name</th>
+        <th>Departures</th>
+        <th>Returns</th>
+        <th>Show all journeys</th>
       </tr>
     </thead>
     <tbody>
-      @foreach (var data in _cityBikeData) {
+      @foreach (var station in _cityBikeStations) {
         <tr>
-          <td>@data.RecordId</td>
-          <td>@data.Departure.ToShortDateString()</td>
-          <td>@data.Return.ToShortDateString()</td>
-          <td>@data.DepartureStationName</td>
-          <td>@data.ReturnStationName</td>
+          <td>@station.StationName</td>
+          <td>@station.Departures</td>
+          <td>@station.Returns</td>
+          <td><button class="btn" @onclick="() => GetStationData(station.StationId)">Open</button></td>
         </tr>
       }
     </tbody>
   </table>
+
+  <StationData CityBikeStationData="_cityBikeData"></StationData>
 }
 
 @code {
-  private CityBikeDataContract[] _cityBikeData;
+  private CityBikeDataContract[] _cityBikeData = new CityBikeDataContract[0];
+  private CityBikeStationOverview[] _cityBikeStations;
 
   protected override async Task OnInitializedAsync() {
-    _cityBikeData = await Http.GetFromJsonAsync<CityBikeDataContract[]>("CityBikeData");
+    _cityBikeStations = await Http.GetFromJsonAsync<CityBikeStationOverview[]>("CityBikeData/Overview");
   }
 
+  private async Task GetStationData(int station) {
+    _cityBikeData = await Http.GetFromJsonAsync<CityBikeDataContract[]>($"CityBikeData/DataByStation/{station}");
+  }
 }

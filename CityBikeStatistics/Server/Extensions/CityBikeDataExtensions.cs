@@ -1,4 +1,5 @@
-﻿using CityBikeStatistics.Server.Database;
+﻿using System.Linq;
+using CityBikeStatistics.Server.Database;
 using CityBikeStatistics.Shared;
 
 namespace CityBikeStatistics.Server.Extensions {
@@ -12,6 +13,13 @@ namespace CityBikeStatistics.Server.Extensions {
       existing.ReturnStationName = contract.ReturnStationName;
       existing.CoveredDistance = contract.CoveredDistance;
       existing.Duration = contract.Duration;
+    }
+
+    public static string GetStationNameById(this CityBikeData[] bikeData, int stationId) {
+      var station = bikeData.FirstOrDefault(x => x.DepartureStationId == stationId);
+      if (station != null) return station.DepartureStationName;
+      station = bikeData.FirstOrDefault(x => x.ReturnStationId == stationId);
+      return station?.ReturnStationName;
     }
   }
 }
