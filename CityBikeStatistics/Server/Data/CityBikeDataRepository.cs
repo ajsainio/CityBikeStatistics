@@ -25,7 +25,7 @@ namespace CityBikeStatistics.Server.Data {
     }
 
     public async Task<IEnumerable<CityBikeDataContract>> GetBikeDataByStationId(int stationId) {
-      return await _db.CityBikeData.Where(x => x.DepartureStationId == stationId || x.ReturnStationId == stationId).ToArrayAsync();
+      return await _db.CityBikeData.Where(x => x.DepartureStationId == stationId || x.ReturnStationId == stationId).OrderBy(x => x.Departure).ToArrayAsync();
     }
 
     public async Task<IEnumerable<CityBikeStationOverview>> GetStationOverview() {
@@ -38,7 +38,7 @@ namespace CityBikeStatistics.Server.Data {
           Departures = bikeData.Count(x => x.DepartureStationId == station),
           Returns = bikeData.Count(x => x.ReturnStationId == station)
         }).ToList();
-      return stationData;
+      return stationData.OrderBy(x => x.StationName);
     }
 
   }
