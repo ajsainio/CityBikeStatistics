@@ -1,26 +1,33 @@
 ﻿@using CityBikeStatistics.Shared
+
+@if (CityBikeStationData == null || CityBikeStationData.Length == 0) {
+  <p><em>Station details will be displayed here</em ></p>
+} else {
 <table class="table">
   <thead>
-  <tr>
-    <th>Id</th>
-    <th>Departure time</th>
-    <th>Return time</th>
-    <th>Departure station</th>
-    <th>Return station</th>
-  </tr>
+    <tr>
+      <th>Departure date</th>
+      <th>Return date</th>
+      <th>Departure station</th>
+      <th>Return station</th>
+      <th>Distance</th>
+      <th>Duration</th>
+    </tr>
   </thead>
   <tbody>
-  @foreach (var data in CityBikeStationData) {
+    @foreach (var data in CityBikeStationData) {
     <tr>
-      <td>@data.RecordId</td>
-      <td>@data.Departure.ToShortDateString()</td>
-      <td>@data.Return.ToShortDateString()</td>
+      <td>@data.Departure.ToString("g")</td>
+      <td>@data.Return.ToString("g")</td>
       <td>@data.DepartureStationName</td>
       <td>@data.ReturnStationName</td>
+      <td>@(Math.Floor(data.CoveredDistance)) m</td>
+      <td>@(Math.Floor((decimal)data.Duration/60)) min</td>
     </tr>
-  }
+    }
   </tbody>
 </table>
+}
 
 @code {
   [Parameter]
