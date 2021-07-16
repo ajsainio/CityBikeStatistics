@@ -21,11 +21,11 @@ namespace CityBikeStatistics.Server.MessageHandlers {
         _logger.LogInformation($"Handling city bike data record with record id {record.RecordId}");
         var existingRecord = await _db.CityBikeData.SingleOrDefaultAsync(x => x.RecordId == record.RecordId);
         if (existingRecord == null) {
-          _logger.LogInformation($"Record {record.RecordId} is new, add to database");
+          _logger.LogDebug($"Record {record.RecordId} is new, add to database");
           var newRecord = new CityBikeData(record);
           _db.Add(newRecord);
         } else {
-          _logger.LogInformation($"Record {record.RecordId} exists, update");
+          _logger.LogDebug($"Record {record.RecordId} exists, update");
           existingRecord.CopyFromContract(record);
         }
       }
