@@ -7,6 +7,9 @@
 @if (_cityBikeStations == null) {
   <p><em>Loading...</em></p>
 } else {
+  <div class="form-group">
+    <input class="form-control" type="text" placeholder="Search with station name..." @bind="_filter" @bind:event="oninput" />
+  </div>
   <div class="row">
     <div class="col-4">
       <table class="table">
@@ -20,12 +23,14 @@
         </thead>
         <tbody>
           @foreach (var station in _cityBikeStations) {
-            <tr class="@(station.StationId == _selectedStation ? "table-active" : "")">
-              <td>@station.StationName</td>
-              <td>@station.Departures</td>
-              <td>@station.Returns</td>
-              <td><button class="btn" @onclick="() => GetStationData(station.StationId)">Show</button></td>
-            </tr>
+            if (IsVisible(station.StationName)) {
+              <tr class="@(station.StationId == _selectedStation ? "table-active" : "")">
+                <td>@station.StationName</td>
+                <td>@station.Departures</td>
+                <td>@station.Returns</td>
+                <td><button class="btn btn-sm btn-dark" @onclick="() => GetStationData(station.StationId)">Show</button></td>
+              </tr>
+            }
           }
         </tbody>
       </table>
@@ -41,6 +46,8 @@
   private CityBikeStationOverview[] _cityBikeStations;
   private int _selectedStation;
 
+  private string _filter;
+
   protected override async Task OnInitializedAsync() {
     _cityBikeStations = await Http.GetFromJsonAsync<CityBikeStationOverview[]>("CityBikeData/Overview");
   }
@@ -48,5 +55,9 @@
   private async Task GetStationData(int station) {
     _selectedStation = station;
     _cityBikeData = await Http.GetFromJsonAsync<CityBikeDataContract[]>($"CityBikeData/DataByStation/{station}");
+  }
+
+  private bool IsVisible(string station) {
+    return string.IsNullOrWhiteSpace(_filter) || station.Contains(_filter, StringComparison.OrdinalIgnoreCase);
   }
 }
