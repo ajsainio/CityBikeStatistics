@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using CityBikeStatistics.Server.Data;
 using CityBikeStatistics.Server.Messages;
@@ -35,7 +34,7 @@ namespace CityBikeStatistics.Server.MessageHandlers {
 
       _logger.LogInformation("Records read, sending messages");
       var records = csv.GetRecords<CityBikeDataContract>();
-      foreach (var record in records.Take(10).ToArray()) {
+      foreach (var record in records) {
         var recordMessage = new SendBikeDataRecord {
           Record = record
         };
