@@ -17,6 +17,7 @@ namespace CityBikeStatistics.Server {
         var endpointConfig = new EndpointConfiguration("CityBikeData");
         endpointConfig.PurgeOnStartup(true);
         endpointConfig.UseTransport<LearningTransport>().NoPayloadSizeRestriction();
+        endpointConfig.LimitMessageProcessingConcurrencyTo(2);
         var recoverability = endpointConfig.Recoverability();
         recoverability.Immediate(r => r.NumberOfRetries(1));
         recoverability.Delayed(r => r.NumberOfRetries(0));

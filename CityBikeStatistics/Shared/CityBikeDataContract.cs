@@ -2,7 +2,7 @@
 
 namespace CityBikeStatistics.Shared {
   public class CityBikeDataContract {
-    public int RecordId { get; set; }
+    public long RecordId { get; set; }
     public DateTime Departure { get; set; }
     public DateTime Return { get; set; }
     public int DepartureStationId { get; set; }

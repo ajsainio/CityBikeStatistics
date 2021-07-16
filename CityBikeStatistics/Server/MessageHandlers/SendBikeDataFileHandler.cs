@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CityBikeStatistics.Server.Data;
 using CityBikeStatistics.Server.Messages;
@@ -32,15 +33,32 @@ namespace CityBikeStatistics.Server.MessageHandlers {
       var map = new CityBikeDataMap(message.Year, message.Month);
       csv.Context.RegisterClassMap(map);
 
-      _logger.LogInformation("Records read, sending messages");
-      var records = csv.GetRecords<CityBikeDataContract>();
-      foreach (var record in records) {
-        var recordMessage = new SendBikeDataRecord {
-          Record = record
+      var records = csv.GetRecords<CityBikeDataContract>().ToArray();
+
+
+      var handled = 0;
+      var total = records.Length;
+      const int batchSize = 1000;
+      _logger.LogInformation($"{total} records read, sending messages in batch of {batchSize}");
+
+      while (handled < total) {
+        
+        var batch = records.Skip(handled).Take(batchSize).ToArray();
+        var recordMessage = new SendBikeDataRecordBatch {
+          Records = batch
         };
-        await context.SendLocal(recordMessage);
-        _logger.LogDebug($"Record with record id {recordMessage.Record.RecordId} sent to handling");
+
+        var options = new SendOptions();
+        options.RequiredImmediateDispatch();
+        options.RouteToThisEndpoint();
+        await context.Send(recordMessage, options);
+        
+        _logger.LogDebug($"Record batch {handled} to {handled + batchSize} sent to handling");
+
+        handled += batchSize;
       }
+
     }
+
   }
 }
