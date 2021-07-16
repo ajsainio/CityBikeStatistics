@@ -55,6 +55,8 @@ namespace CityBikeStatistics.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Departure");
+
                     b.HasIndex("DepartureStationId");
 
                     b.HasIndex("RecordId")

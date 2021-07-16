@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CityBikeStatistics.Server.Data;
 using CityBikeStatistics.Shared;
@@ -20,24 +21,17 @@ namespace CityBikeStatistics.Server.Controllers {
     }
 
     [HttpGet]
-    [Route("Overview")]
-    public async Task<IEnumerable<CityBikeStationOverview>> GetBikeDataOverview() {
-      _logger.LogInformation("Getting station overview");
-      return await _repository.GetStationOverview();
+    [Route("Overview/{startTime:datetime}/{endTime:datetime}")]
+    public async Task<IEnumerable<CityBikeStationOverview>> GetBikeDataOverview(DateTime startTime, DateTime endTime) {
+      _logger.LogInformation($"Getting station overview for time range {startTime:d} - {endTime:d}");
+      return await _repository.GetStationOverview(startTime, endTime);
     }
 
     [HttpGet]
-    [Route("Stations")]
-    public async Task<IEnumerable<int>> GetBikeStations() {
-      _logger.LogInformation("Getting bike stations");
-      return await _repository.GetStations();
-    }
-
-    [HttpGet]
-    [Route("DataByStation/{stationId}")]
-    public async Task<IEnumerable<CityBikeDataContract>> GetDataByStation(int stationId) {
-      _logger.LogInformation($"Getting data for station {stationId}");
-      return await _repository.GetBikeDataByStationId(stationId);
+    [Route("DataByStation/{stationId:int}/{startTime:datetime}/{endTime:datetime}")]
+    public async Task<IEnumerable<CityBikeDataContract>> GetDataByStation(int stationId, DateTime startTime, DateTime endTime) {
+      _logger.LogInformation($"Getting data for station {stationId} with time range {startTime:d} - {endTime:d}");
+      return await _repository.GetBikeDataByStationId(stationId, startTime, endTime);
     }
   }
 }

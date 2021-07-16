@@ -12,8 +12,8 @@ namespace CityBikeStatistics.Server.Data {
       Map(m => m.ReturnStationId).Name("Return station id");
       Map(m => m.DepartureStationName).Name("Departure station name");
       Map(m => m.ReturnStationName).Name("Return station name");
-      Map(m => m.CoveredDistance).Name("Covered distance (m)");
-      Map(m => m.Duration).Name("Duration (sec.)");
+      Map(m => m.CoveredDistance).Name("Covered distance (m)").Default(0);
+      Map(m => m.Duration).Name("Duration (sec.)").Default(0);
     }
   }
 }

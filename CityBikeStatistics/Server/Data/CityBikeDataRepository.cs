@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CityBikeStatistics.Server.Database;
@@ -18,19 +19,14 @@ namespace CityBikeStatistics.Server.Data {
       _logger = logger;
     }
 
-    public async Task<IEnumerable<int>> GetStations() {
-      return await _db.CityBikeData.Select(x => x.DepartureStationId).Distinct()
-        .Union(_db.CityBikeData.Where(x => x.ReturnStationId !=null).Select(x => x.ReturnStationId).Cast<int>().Distinct())
-        .ToArrayAsync();
+    public async Task<IEnumerable<CityBikeDataContract>> GetBikeDataByStationId(int stationId, DateTime startTime, DateTime endTime) {
+      var records = await GetFilteredData(startTime, endTime);
+      return records.Where(x => x.DepartureStationId == stationId || x.ReturnStationId == stationId).OrderBy(x => x.Departure);
     }
 
-    public async Task<IEnumerable<CityBikeDataContract>> GetBikeDataByStationId(int stationId) {
-      return await _db.CityBikeData.Where(x => x.DepartureStationId == stationId || x.ReturnStationId == stationId).OrderBy(x => x.Departure).ToArrayAsync();
-    }
-
-    public async Task<IEnumerable<CityBikeStationOverview>> GetStationOverview() {
-      var stations = await GetStations();
-      var bikeData = await _db.CityBikeData.ToArrayAsync();
+    public async Task<IEnumerable<CityBikeStationOverview>> GetStationOverview(DateTime startTime, DateTime endTime) {
+      var bikeData = await GetFilteredData(startTime, endTime);
+      var stations = GetStations(bikeData);
       var stationData = stations.Select(station =>
         new CityBikeStationOverview {
           StationId = station,
@@ -41,6 +37,15 @@ namespace CityBikeStatistics.Server.Data {
       return stationData.OrderBy(x => x.StationName);
     }
 
-  }
+    private async Task<CityBikeData[]> GetFilteredData(DateTime startTime, DateTime endTime) {
+      return await _db.CityBikeData.Where(x => x.Departure >= startTime && x.Departure < endTime).ToArrayAsync();
+    }
 
+    private int[] GetStations(CityBikeData[] records) {
+      return records.Select(x => x.DepartureStationId).Distinct()
+        .Union(records.Where(x => x.ReturnStationId != null).Select(x => x.ReturnStationId).Cast<int>().Distinct())
+        .ToArray();
+    }
+
+  }
 }

@@ -13,6 +13,7 @@ namespace CityBikeStatistics.Server.Database {
         x.HasIndex(i => i.RecordId).IsUnique();
         x.HasIndex(i => i.DepartureStationId);
         x.HasIndex(i => i.ReturnStationId);
+        x.HasIndex(i => i.Departure);
         x.Property(p => p.CoveredDistance).HasColumnType("Decimal(18,2)");
       });
     }

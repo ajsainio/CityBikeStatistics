@@ -4,6 +4,13 @@
 
 <h1>Bike data</h1>
 
+<div class="form-group">
+  <p><em>Set time range for departures</em></p>
+  <label for="StartDate">Start date: </label><input id="StartDate" type="date" @bind="_startDate" />
+  <label for="EndDate">End date: </label><input id="EndDate" type="date" @bind="_endDate" />
+  <button class="btn btn-primary" @onclick="GetBikeDataOverview">Search</button>
+</div>
+
 @if (_cityBikeStations == null) {
   <p><em>Loading...</em></p>
 } else {
@@ -43,18 +50,28 @@
 
 @code {
   private CityBikeDataContract[] _cityBikeData = new CityBikeDataContract[0];
-  private CityBikeStationOverview[] _cityBikeStations;
+  private CityBikeStationOverview[] _cityBikeStations = new CityBikeStationOverview[0];
   private int _selectedStation;
 
   private string _filter;
 
-  protected override async Task OnInitializedAsync() {
-    _cityBikeStations = await Http.GetFromJsonAsync<CityBikeStationOverview[]>("CityBikeData/Overview");
+  private DateTime _startDate = DateTime.Today.AddDays(-1);
+  private DateTime _endDate = DateTime.Today;
+  private string _selectedStartDate;
+  private string _selectedEndDate;
+  
+  private async Task GetBikeDataOverview() {
+    _cityBikeStations = null;
+    _cityBikeData = new CityBikeDataContract[0];
+    _selectedStartDate = _startDate.ToString("MM-dd-yyyy");
+    _selectedEndDate = _endDate.AddDays(1).ToString("MM-dd-yyyy");
+    _cityBikeStations = await Http.GetFromJsonAsync<CityBikeStationOverview[]>($"CityBikeData/Overview/{_selectedStartDate}/{_selectedEndDate}");
   }
 
   private async Task GetStationData(int station) {
+    _cityBikeData = new CityBikeDataContract[0];
     _selectedStation = station;
-    _cityBikeData = await Http.GetFromJsonAsync<CityBikeDataContract[]>($"CityBikeData/DataByStation/{station}");
+    _cityBikeData = await Http.GetFromJsonAsync<CityBikeDataContract[]>($"CityBikeData/DataByStation/{station}/{_selectedStartDate}/{_selectedEndDate}");
   }
 
   private bool IsVisible(string station) {
